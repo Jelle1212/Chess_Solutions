@@ -1,13 +1,15 @@
 import java.util.*;
+import java.util.Scanner;  // Import the Scanner class
 
+public class board{
 
-public class board {
-
-static int N = 5;
-static int M = 5;
-static int Queens = 1;
-static int Bishops = 3;
-static int count = 0;
+static int N;
+static int M;
+static int Queens;
+static int Bishops;
+static int count;
+static boolean Part = false;
+static int[][] FinalBoard;
 // Just to start it off.
 static int count_solutions(int max_queens, int max_bishops, int a, int b) {
     int[][] board= new int[a][b];
@@ -27,13 +29,9 @@ static int recurse(int[][] board, int i, int n, int max_queens, int max_bishops,
     if((max_queens == queens && max_bishops == bishops)) {
         //If we have placed all the pieces, it is time to check if it is a solution.
         //Return one if it is, otherwise zero.
-        //return (int) check_solution(board);
+  
         
-       count += squares_under_attack(board);
-       //print2D(board);
-       //System.out.println("");
-   
-
+        count += squares_under_attack(board);
         return 1;
     }
     //We havent placed all the pieces yet. Time to do some recursion.
@@ -70,8 +68,7 @@ public static int squares_under_attack(int board[][]){  //analyze the board and 
             }      
         }
     }
-    print2D(board);
-    System.out.println("");
+    FinalBoard = Arrays.stream(board).map(int[]::clone).toArray(int[][]::new);
     return 1;
 }
 public static boolean isAttacked(int row , int col, int board[][]){
@@ -155,6 +152,41 @@ public static boolean isAttacked(int row , int col, int board[][]){
     return false; 
 }
  
+public static void UserInput(){
+    String B = "";
+    Scanner myObj = new Scanner(System.in);
+
+    System.out.println("Enter Length of The Board: ");
+    // Numerical input
+    M = myObj.nextInt();
+    System.out.println("Enter Width of The Board: ");
+    N = myObj.nextInt();
+    System.out.println("Enter Number of Bishops: ");
+    myObj.nextLine(); 
+    B = myObj.nextLine();
+    System.out.println("Enter Number of Queens: ");
+    Queens = myObj.nextInt();
+    if(B.isEmpty()){
+        Part = true;
+        System.out.println("Calculating the Minimum Number of Bishops");
+        Bishops = 0;
+        // Output input by user
+        System.out.println("M: " + M);
+        System.out.println("N: " + N);
+        System.out.println("Nr of Queens: " + Queens);
+    }
+    else{
+        Bishops = Integer.parseInt(B);
+        Part = false;
+        // Output input by user
+        System.out.println("M: " + M);
+        System.out.println("N: " + N);
+        System.out.println("Nr of Queens: " + Queens);
+        System.out.println("Nr of Bishops: " + Bishops);
+    }
+    
+
+}
 
 public static void print2D(int mat[][]) 
     { 
@@ -165,11 +197,30 @@ public static void print2D(int mat[][])
             // and then printing in a separate line 
             System.out.println(Arrays.toString(row));
             
-    } 
+    }
+
    
 public static void main(String[] args) {
-    count_solutions(Queens, Bishops, N, M);
-    System.out.println(count);
-    System.out.println("");    
+    UserInput();
+    if(!Part){
+        count_solutions(Queens, Bishops, N, M);
+        System.out.println("Total Number of Solutions: " + count);
+        System.out.println("");
+        print2D(FinalBoard);
+        System.out.println("");
+    }
+
+    else{
+        while(count == 0){
+            count_solutions(Queens, Bishops, N, M);
+            if (count == 0)
+                Bishops ++;
+        }
+        System.out.println("Minimum Number of Bishops: " + Bishops);
+        System.out.println("Total Number of Solutions: " + count);
+        System.out.println("");
+        print2D(FinalBoard);
+        System.out.println("");       
+    } 
     }   
 }
